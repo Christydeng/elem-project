@@ -1,7 +1,7 @@
 <template>
   	<div class="city_container">
         <head-top :head-title="cityname" go-back='true'>
-            <router-link to="/home" slot="changecity" class="change_city">切换城市</router-link>uuuu
+            <router-link to="/home" slot="changecity" class="change_city">切换城市</router-link>
         </head-top>
         <form class="city_form" v-on:submit.prevent>
             <div>
@@ -25,7 +25,7 @@
 
 <script>
     import headTop from '@/components/header/head'
-    import {currentcity, searchplace} from '@/service/getData'
+    // import {currentcity, searchplace} from '@/service/getData'
     import {getStore, setStore, removeStore} from '@/config/mUtils'
 
     export default {
@@ -43,10 +43,12 @@
 
         mounted(){
             this.cityid = this.$route.params.cityid;
-            console.log("城市ID===", this.cityid);
             //获取当前城市名字
             this.getCurrentcity();
+            //获取搜索历史记录
             this.initData();
+            //发送搜索信息inputVaule
+            this.postpois();
         },
 
         components:{
@@ -76,13 +78,16 @@
                 }
             },
             //发送搜索信息inputVaule
-            postpois(){
+            postpois () {
+                let vm = this;
                 //输入值不为空时才发送信息
-                if (this.inputVaule) {
-                    searchplace(this.cityid, this.inputVaule).then(res => {
-                        this.historytitle = false;
-                        this.placelist = res;
-                        this.placeNone = res.length? false : true;
+                if (vm.inputVaule) {
+                    vm.$http.get('http://cangdu.org:8001/v1/pois', {params: {'city_id': vm.cityid, 'keyword': vm.inputVaule}}).then(function(response) {
+                        vm.historytitle = false;
+                        vm.placelist = response.body;
+                        vm.placeNone = response.length? false : true;
+                      }, function(response) {
+                        alert("请求失败了")
                     })
                 }
             },
