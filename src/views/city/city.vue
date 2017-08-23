@@ -1,7 +1,7 @@
 <template>
   	<div class="city_container">
         <head-top :head-title="cityname" go-back='true'>
-            <router-link to="/home" slot="changecity" class="change_city">切换城市</router-link>uuuu
+            <router-link to="/home" slot="changecity" class="change_city">切换城市</router-link>
         </head-top>
         <form class="city_form" v-on:submit.prevent>
             <div>
@@ -25,8 +25,8 @@
 
 <script>
     import headTop from '@/components/header/head'
-    import {currentcity, searchplace} from '@/service/getData'
     import {getStore, setStore, removeStore} from '@/config/mUtils'
+    import { global } from '@/service/getData'
 
     export default {
     	data(){
@@ -60,12 +60,12 @@
         methods:{
             getCurrentcity () {
                 let vm = this;
-                vm.$http.get('http://cangdu.org:8001/v1/cities/' + vm.cityid).then(function(response) {
+                global.get('/v1/cities/' + vm.cityid, null, function(response) {
                     var data = response.body
                     vm.cityname = data.name
                   }, function(response) {
                     alert("请求失败了")
-                })
+                }, false)
             },
             initData () {
                 //获取搜索历史记录
@@ -77,13 +77,16 @@
             },
             //发送搜索信息inputVaule
             postpois(){
+                let vm = this;
                 //输入值不为空时才发送信息
                 if (this.inputVaule) {
-                    searchplace(this.cityid, this.inputVaule).then(res => {
-                        this.historytitle = false;
-                        this.placelist = res;
-                        this.placeNone = res.length? false : true;
-                    })
+                    global.get('/v1/pois', {params: {'city_id': vm.cityid, 'keyword': vm.inputVaule}}, function(response) {
+                        vm.historytitle = false;
+                        vm.placelist = response.body;
+                        vm.placeNone = response.body.length? false : true;
+                    }, function(response){
+                        alert('请求失败了')
+                    }, false)
                 }
             },
             /**
@@ -91,7 +94,7 @@
              * 如果没有则新增，如果有则不做重复储存，判断完成后进入下一页
              */
             nextpage(index, geohash){
-                let history = getStore('placeHistory');
+                let history = ('placeHistory');
                 let choosePlace = this.placelist[index];
                 if (history) {
                     let checkrepeat = false;

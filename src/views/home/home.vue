@@ -42,7 +42,7 @@
 
 <script>
 import headTop from '@/components/header/head'
-// import {cityGuess, hotcity, groupcity} from '@/service/getData'
+import { global } from '@/service/getData'
 
 export default {
     data(){
@@ -87,38 +87,38 @@ export default {
         reload(){
             window.location.reload();
         },
-        getCityGuess: function () {
+        // 获取当前城市
+        getCityGuess  () {
             let vm = this;
-            vm.$http.get('http://cangdu.org:8001/v1/cities',{params: {'type': 'guess'}}).then(function(response) {
+            global.get('/v1/cities', {params: {'type': 'guess' }}, function(response) {
                 var data = response.body
                 vm.guessCity = data.name
                 vm.guessCityid = data.id
-                console.log("当前城市===",data); 
               }, function(response) {
                 alert("请求失败了")
-            })
+            }, false)
         },
-        getHotcity: function () {
+        //获取热门城市
+        getHotcity  () {
             let vm = this;
-            vm.$http.get('http://cangdu.org:8001/v1/cities',{params: {'type': 'hot'}}).then(function(response) {
+            global.get('/v1/cities', {params: {'type': 'hot'}}, function(response) {
                 var data = response.body
                 vm.hotcity = data
-                console.log("热门城市===",data); 
               }, function(response) {
                 alert("请求失败了")
-            })
+            }, false)
         },
-        getGroupcity: function () {
+        //获取所有城市
+        getGroupcity () {
             let vm = this;
-            vm.$http.get('http://cangdu.org:8001/v1/cities',{params: {'type': 'group'}}).then(function(response) {
+            global.get('/v1/cities', {params: {'type': 'group'}}, function(response) {
                 var data = response.body
                 vm.groupcity = data
-                console.log("所有城市===",data); 
               }, function(response) {
                 alert("请求失败了")
-            })
+            }, false)
         }
-    },
+    }
 }
 
 </script>
