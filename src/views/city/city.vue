@@ -36,14 +36,13 @@
                 cityname:'', // 当前城市名字
                 placelist:[], // 搜索城市列表
                 placeHistory:[], // 历史搜索记录
-                historytitle: true, // 默认显示搜索历史头部，点击搜索后隐藏
+                historytitle: true, // 默认显示搜索历史头部，点击提交后隐藏
                 placeNone: false, // 搜索无结果，显示提示信息
             }
         },
 
         mounted(){
             this.cityid = this.$route.params.cityid;
-            console.log("城市ID===", this.cityid);
             //获取当前城市名字
             this.getCurrentcity();
             this.initData();
@@ -94,7 +93,7 @@
              * 如果没有则新增，如果有则不做重复储存，判断完成后进入下一页
              */
             nextpage(index, geohash){
-                let history = ('placeHistory');
+                let history = getStore('placeHistory');
                 let choosePlace = this.placelist[index];
                 if (history) {
                     let checkrepeat = false;

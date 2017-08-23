@@ -48,3 +48,5 @@ export  const global = {
 export const getUser = null;
 
 export const getAddressList = null;
+
+export const shopList = null;
