@@ -34,111 +34,111 @@
 					</svg>
 					<span class="shop_header_title">附近商家</span>
 				</header>
-				<!-- <shop-list v-if="hasGetData" :geohash="geohash"></shop-list> -->
+				<shop-list v-if="hasGetData" :geohash="geohash"></shop-list>
 			</div>
 			<foot-guide></foot-guide>
 		</div>    
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
-import headTop from '@/components/header/head'
-import footGuide from '@/components/footer/footGuide'
-import shopList from '@/components/common/shoplist'
-import '@/style/swiper.min.css'
-import { global } from '@/service/getData'
+	import {mapMutations} from 'vuex'
+	import headTop from '@/components/header/head'
+	import footGuide from '@/components/footer/footGuide'
+	// import shopList from '@/components/common/shoplist'
+	import '@/style/swiper.min.css'
+	import { global } from '@/service/getData'
 
-export default {
-	data(){
-				return {
-					geohash: '', // city页面传递过来的地址geohash
-						msietTitle: '请选择地址...', // msiet页面头部标题
-						foodTypes: [], // 食品分类列表
-						hasGetData: false, //是否已经获取地理位置数据，成功之后再获取商铺列表信息
-						imgBaseUrl: 'https://fuss10.elemecdn.com', //图片域名地址
-				}
-		},
-		async beforeMount(){
-		if (!this.$route.query.geohash) {
-			const address = await cityGuess();
-			this.geohash = address.latitude + ',' + address.longitude;
-		}else{
-			this.geohash = this.$route.query.geohash
-		}
-		//保存geohash 到vuex
-		this.SAVE_GEOHASH(this.geohash);
-			//获取位置信息
-			this.getMsiteAdress();
-			// 记录当前经度纬度
-			this.RECORD_ADDRESS(res);
-
-			this.hasGetData = true;
-		},
-		mounted(){
-				//获取导航食品类型列表
-				this.getMsiteFoodTypes();
-		},
-		components: {
-			headTop,
-			// shopList,
-			footGuide,
-		},
-		computed: {
-
-		},
-		methods: {
-			...mapMutations([
-				'RECORD_ADDRESS', 'SAVE_GEOHASH'
-			]),
-			// 解码url地址，求去restaurant_category_id值
-			getCategoryId(url){
-				let urlData = decodeURIComponent(url.split('=')[1].replace('&target_name',''));
-				if (/restaurant_category_id/gi.test(urlData)) {
-					return JSON.parse(urlData).restaurant_category_id.id
-				}else{
-					return ''
-				}
-			},
-			//获取位置信息
-			getMsiteAdress () {
-						let vm = this;
-						global.get('/v2/pois/' + vm.geohash, null, function(response) {
-								var data = response.body
-								vm.msietTitle = data.name
-							}, function(response) {
-								alert("请求失败了")
-						}, false)
-				},
-				//获取导航食品类型列表
-				getMsiteFoodTypes () {
-					let vm = this;
-					vm.$http.get('http://cangdu.org:8001/v2/index_entry').then(res => {
-						let resLength = res.body.length;
-						// let resArr = [...res.body]; // 返回一个新的数组
-						let resArr = res.body
-						let foodArr = [];
-					for (let i = 0, j = 0; i < resLength; i += 8, j++) {
-						foodArr[j] = resArr.splice(0, 8);
+	export default {
+		data(){
+					return {
+						geohash: '', // city页面传递过来的地址geohash
+							msietTitle: '请选择地址...', // msiet页面头部标题
+							foodTypes: [], // 食品分类列表
+							hasGetData: false, //是否已经获取地理位置数据，成功之后再获取商铺列表信息
+							imgBaseUrl: 'https://fuss10.elemecdn.com', //图片域名地址
 					}
-					this.foodTypes = foodArr;
-				}).then(() => {
-					//初始化swiper
-					new Swiper('.swiper-container', {
-						pagination: '.swiper-pagination',
-						loop: true
-				});
-				})
-				}
-		},
-		watch: {
+			},
+			async beforeMount(){
+			if (!this.$route.query.geohash) {
+				const address = await cityGuess();
+				this.geohash = address.latitude + ',' + address.longitude;
+			}else{
+				this.geohash = this.$route.query.geohash
+			}
+			//保存geohash 到vuex
+			this.SAVE_GEOHASH(this.geohash);
+				//获取位置信息
+				this.getMsiteAdress();
+				// 记录当前经度纬度
+				this.RECORD_ADDRESS(res);
 
-		}
-}
+				this.hasGetData = true;
+			},
+			mounted(){
+					//获取导航食品类型列表
+					this.getMsiteFoodTypes();
+			},
+			components: {
+				headTop,
+				// shopList,
+				footGuide,
+			},
+			computed: {
+
+			},
+			methods: {
+				...mapMutations([
+					'RECORD_ADDRESS', 'SAVE_GEOHASH'
+				]),
+				// 解码url地址，求去restaurant_category_id值
+				getCategoryId(url){
+					let urlData = decodeURIComponent(url.split('=')[1].replace('&target_name',''));
+					if (/restaurant_category_id/gi.test(urlData)) {
+						return JSON.parse(urlData).restaurant_category_id.id
+					}else{
+						return ''
+					}
+				},
+				//获取位置信息
+				getMsiteAdress () {
+							let vm = this;
+							global.get('/v2/pois/' + vm.geohash, null, function(response) {
+									var data = response.body
+									vm.msietTitle = data.name
+								}, function(response) {
+									alert("请求失败了")
+							}, false)
+					},
+					//获取导航食品类型列表
+					getMsiteFoodTypes () {
+						let vm = this;
+						vm.$http.get('http://cangdu.org:8001/v2/index_entry').then(res => {
+							let resLength = res.body.length;
+							// let resArr = [...res.body]; // 返回一个新的数组
+							let resArr = res.body
+							let foodArr = [];
+						for (let i = 0, j = 0; i < resLength; i += 8, j++) {
+							foodArr[j] = resArr.splice(0, 8);
+						}
+						this.foodTypes = foodArr;
+					}).then(() => {
+						//初始化swiper
+						new Swiper('.swiper-container', {
+							pagination: '.swiper-pagination',
+							loop: true
+					});
+					})
+					}
+			},
+			watch: {
+
+			}
+	}
 
 </script>
 
 <style lang="scss" scoped>
-		@import 'src/style/mixin';
+	@import 'src/style/mixin';
 	.link_search{
 		left: .8rem;
 		@include wh(.9rem, .9rem);
